@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheather app</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- api:- 9ebda58937befebbd560f145849e6295 -->
+
+    <div class="card">
+        <div class="search">
+            <input type="text" class="searchbox" placeholder="enter city name" spellcheck="false">
+            <button><img src="./images/search.png"></button>
+        </div>
+        <div class="error">
+            Invalid city name
+        </div>
+        <div class="weather">
+            <img src="./images/rain.png" class="weather-icon">
+            <h1 class="temp">22°c</h1>
+            <h2 class="city">Bengaluru</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="./images/humidity.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="./images/wind.png">
+                    <div>
+                        <p class="wind">15km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let apikey = "9ebda58937befebbd560f145849e6295"
+        let apiurl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q="
+        let searchBox = document.querySelector(".search input")
+        let tempButton = document.querySelector(".search button")
+        let tempImg = document.querySelector(".weather-icon")
+        let weather = document.querySelector(".weather")
+        let errortext = document.querySelector(".error")
+
+
+        async function getTempData(city) {
+
+            try {
+                let response = await fetch(apiurl + city + `&appid=${apikey}`)
+                let data = await response.json()
+                // console.log(data)
+                if(response.status == 404){
+                    errortext.style.display = "block"
+                    weather.style.display = "none"
+
+                }
+                else{
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C"
+                document.querySelector(".city").innerHTML = data.name
+                document.querySelector(".wind").innerHTML = Math.round(data.wind.speed) + ("km/h")
+                document.querySelector(".humidity").innerHTML = Math.round(data.main.humidity) + "%"
+
+                if (data.weather[0].main == "Haze") {
+                    tempImg.src = "./images/haze.png"
+                }
+                else if (data.weather[0].main == "Clouds") {
+                    tempImg.src = "./images/clouds.png"
+                }
+                else if (data.weather[0].main == "Rain") {
+                    tempImg.src = "./images/rain.png"
+                }
+                else if (data.weather[0].main == "Clear") {
+                    tempImg.src = "./images/clear.png"
+                }
+                else if (data.weather[0].main == "Drizzle") {
+                    tempImg.src = "./images/drizzle.png"
+                }
+                else if (data.weather[0].main == "Mist") {
+                    tempImg.src = "./images/mist.png"
+                }
+                searchBox.value = ""
+                errortext.style.display = "none"
+                weather.style.display = "block"
+            }
+
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        tempButton.addEventListener('click', () => {
+            getTempData(searchBox.value)
+        })
+
+    </script>
+</body>
+
+</html>
